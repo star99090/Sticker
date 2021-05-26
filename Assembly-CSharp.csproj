@@ -58,6 +58,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\ARFaceChange.cs" />
     <Compile Include="Assets\Scripts\ARCoreFaceRegionManager.cs" />
+    <Compile Include="Assets\Scripts\ScreenShot.cs" />
+    <Compile Include="Assets\Scripts\Gallery.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

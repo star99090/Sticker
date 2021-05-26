@@ -7,9 +7,15 @@ using Unity.Collections;
 
 public class ARCoreFaceRegionManager : MonoBehaviour
 {
+    [Header("Sticker Prefabs")]
     public GameObject nosePrefab;
     public GameObject leftHeadPrefab;
     public GameObject rightHeadPrefab;
+    public Material fadeMaterial;
+    [Space(10)]
+
+    [Header("Debug Face")]
+    public Material debugFaceMaterial;
 
     ARFaceManager arFaceManager;
     ARSessionOrigin sessionOrigin;
@@ -20,54 +26,79 @@ public class ARCoreFaceRegionManager : MonoBehaviour
     GameObject leftHeadObject;
     GameObject rightHeadObject;
 
+    bool isFox;
+
     void Start()
     {
         arFaceManager = GetComponent<ARFaceManager>();
         sessionOrigin = GetComponent<ARSessionOrigin>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void IsFoxTrue()
     {
-        ARCoreFaceSubsystem subsystem = (ARCoreFaceSubsystem)arFaceManager.subsystem;
+        isFox = true;
 
         foreach(ARFace face in arFaceManager.trackables)
+           face.GetComponent<MeshRenderer>().material = fadeMaterial;
+    }
+
+    public void IsFoxFalse()
+    {
+        isFox = false;
+
+        Destroy(noseObject);
+        Destroy(leftHeadObject);
+        Destroy(rightHeadObject);
+
+        foreach (ARFace face in arFaceManager.trackables)
+            face.GetComponent<MeshRenderer>().material = debugFaceMaterial;
+    }
+
+    void Update()
+    {
+        if (isFox)
         {
-            subsystem.GetRegionPoses(face.trackableId, Unity.Collections.Allocator.Persistent, ref faceRegions);
+            ARCoreFaceSubsystem subsystem = (ARCoreFaceSubsystem)arFaceManager.subsystem;
 
-            foreach(ARCoreFaceRegionData faceRegion in faceRegions)
+            if(arFaceManager.trackables.count == 0)
             {
-                ARCoreFaceRegion regionType = faceRegion.region;
+                Destroy(noseObject);
+                Destroy(leftHeadObject);
+                Destroy(rightHeadObject);
+            }
 
-                if(regionType == ARCoreFaceRegion.NoseTip)
+            foreach (ARFace face in arFaceManager.trackables)
+            {
+                subsystem.GetRegionPoses(face.trackableId, Unity.Collections.Allocator.Persistent, ref faceRegions);
+
+                foreach (ARCoreFaceRegionData faceRegion in faceRegions)
                 {
-                    if (!noseObject)
+                    ARCoreFaceRegion regionType = faceRegion.region;
+                    
+                    if (regionType == ARCoreFaceRegion.NoseTip)
                     {
-                        noseObject = Instantiate(nosePrefab, sessionOrigin.trackablesParent);
-                    }
+                        if (!noseObject)
+                            noseObject = Instantiate(nosePrefab, sessionOrigin.trackablesParent);
 
-                    noseObject.transform.localPosition = faceRegion.pose.position;
-                    noseObject.transform.localRotation = faceRegion.pose.rotation;
-                }
-                else if (regionType == ARCoreFaceRegion.ForeheadLeft)
-                {
-                    if (!leftHeadObject)
+                        noseObject.transform.localPosition = faceRegion.pose.position;
+                        noseObject.transform.localRotation = faceRegion.pose.rotation;
+                    }
+                    else if (regionType == ARCoreFaceRegion.ForeheadLeft)
                     {
-                        leftHeadObject = Instantiate(leftHeadPrefab, sessionOrigin.trackablesParent);
-                    }
+                        if (!leftHeadObject)
+                            leftHeadObject = Instantiate(leftHeadPrefab, sessionOrigin.trackablesParent);
 
-                    leftHeadObject.transform.localPosition = faceRegion.pose.position;
-                    leftHeadObject.transform.localRotation = faceRegion.pose.rotation;
-                }
-                else if (regionType == ARCoreFaceRegion.ForeheadRight)
-                {
-                    if (!rightHeadObject)
+                        leftHeadObject.transform.localPosition = faceRegion.pose.position;
+                        leftHeadObject.transform.localRotation = faceRegion.pose.rotation;
+                    }
+                    else if (regionType == ARCoreFaceRegion.ForeheadRight)
                     {
-                        rightHeadObject = Instantiate(rightHeadPrefab, sessionOrigin.trackablesParent);
-                    }
+                        if (!rightHeadObject)
+                            rightHeadObject = Instantiate(rightHeadPrefab, sessionOrigin.trackablesParent);
 
-                    rightHeadObject.transform.localPosition = faceRegion.pose.position;
-                    rightHeadObject.transform.localRotation = faceRegion.pose.rotation;
+                        rightHeadObject.transform.localPosition = faceRegion.pose.position;
+                        rightHeadObject.transform.localRotation = faceRegion.pose.rotation;
+                    }
                 }
             }
         }
