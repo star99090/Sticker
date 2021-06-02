@@ -56,10 +56,10 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\ARFaceChange.cs" />
+    <Compile Include="Assets\Scripts\DestroySelf.cs" />
+    <Compile Include="Assets\Scripts\LoadScene.cs" />
+    <Compile Include="Assets\Scripts\ScreenShotPreview.cs" />
     <Compile Include="Assets\Scripts\ARCoreFaceRegionManager.cs" />
-    <Compile Include="Assets\Scripts\ScreenShot.cs" />
-    <Compile Include="Assets\Scripts\Gallery.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
